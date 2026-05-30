@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SentiScope — Sentiment Analysis</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Google Fonts: distinctive pairing -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- ══════════════════════════════════════════════
+       BACKGROUND CANVAS EFFECTS
+  ══════════════════════════════════════════════ -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--1"></div>
+    <div class="bg-glow bg-glow--2"></div>
+    <div class="bg-glow bg-glow--3"></div>
+
+    <!-- ══════════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════════ -->
+    <header class="header">
+      <div class="header__logo">
+        <span class="logo-icon">◈</span>
+        <span class="logo-text">SentiScope</span>
+      </div>
+      <div class="header__badge">
+        <span class="badge-dot"></span>
+        ML-Powered
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════ -->
+    <main class="main">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero__eyebrow">Sentiment Analysis Engine</div>
+        <h1 class="hero__title">
+          Read the <em>emotion</em><br />behind any text
+        </h1>
+        <p class="hero__subtitle">
+          Powered by Logistic Regression trained on 1.6M tweets from the
+          Sentiment140 dataset. Detect Positive, Negative, or Neutral sentiment
+          in milliseconds.
+        </p>
+      </section>
+
+      <!-- Analysis Card -->
+      <section class="card">
+        <!-- Input Area -->
+        <div class="card__input-group">
+          <label class="card__label" for="text-input">
+            <span class="label-icon">✦</span>
+            Enter your text
+          </label>
+          <div class="textarea-wrapper">
+            <textarea
+              id="text-input"
+              class="card__textarea"
+              placeholder="Type or paste text here… e.g. 'I absolutely love this new feature, it saved my day!'"
+              maxlength="5000"
+              rows="5"
+              aria-label="Text for sentiment analysis"
+            ></textarea>
+            <div class="char-counter">
+              <span id="char-count">0</span> / 5000
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Examples -->
+        <div class="examples">
+          <span class="examples__label">Try:</span>
+          <button
+            class="example-pill"
+            data-text="I absolutely love this! Best day of my life, feeling incredible! 🎉"
+          >
+            😄 Joyful
+          </button>
+          <button
+            class="example-pill"
+            data-text="This is a complete disaster. I'm so frustrated and disappointed with everything."
+          >
+            😤 Frustrated
+          </button>
+          <button
+            class="example-pill"
+            data-text="The meeting is scheduled for 3pm on Tuesday at the main conference room."
+          >
+            📋 Neutral
+          </button>
+          <button
+            class="example-pill"
+            data-text="Just got my results back. I can't believe how amazing this turned out!"
+          >
+            🌟 Surprised
+          </button>
+        </div>
+
+        <!-- Analyze Button -->
+        <button
+          class="analyze-btn"
+          id="analyze-btn"
+          onclick="analyzeSentiment()"
+        >
+          <span class="btn-text">Analyze Sentiment</span>
+          <span class="btn-icon">→</span>
+        </button>
+
+        <!-- Loading Spinner -->
+        <div class="loading" id="loading" aria-live="polite">
+          <div class="spinner">
+            <div class="spinner__ring"></div>
+            <div class="spinner__ring spinner__ring--2"></div>
+            <div class="spinner__ring spinner__ring--3"></div>
+          </div>
+          <p class="loading__text">Analyzing emotional tone…</p>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-box" id="error-box" role="alert">
+          <span class="error-icon">⚠</span>
+          <span id="error-message">Something went wrong.</span>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="result" id="result" aria-live="polite">
+          <!-- Sentiment Badge -->
+          <div class="result__top">
+            <div class="result__sentiment-wrap">
+              <div class="sentiment-label" id="sentiment-label">—</div>
+              <div class="sentiment-icon" id="sentiment-icon">◉</div>
+            </div>
+            <div class="result__confidence-wrap">
+              <div class="confidence-title">Confidence</div>
+              <div class="confidence-value" id="confidence-value">—</div>
+            </div>
+          </div>
+
+          <!-- Confidence Bar -->
+          <div class="confidence-bar-track">
+            <div class="confidence-bar" id="confidence-bar"></div>
+            <div class="confidence-bar-label" id="confidence-bar-label">0%</div>
+          </div>
+
+          <!-- Explanation -->
+          <div class="result__explanation">
+            <div class="explanation-header">
+              <span class="explanation-dot"></span>
+              Analysis
+            </div>
+            <p class="explanation-text" id="explanation-text">—</p>
+          </div>
+
+          <!-- Processed Text (Debug) -->
+          <details class="result__debug">
+            <summary>🔬 Processed tokens</summary>
+            <code id="processed-text">—</code>
+          </details>
+        </div>
+      </section>
+
+      <!-- Stats Bar -->
+      <section class="stats">
+        <div class="stat">
+          <div class="stat__value">1.6M</div>
+          <div class="stat__label">Training Tweets</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat__value">5K</div>
+          <div class="stat__label">TF-IDF Features</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat__value">~79%</div>
+          <div class="stat__label">Test Accuracy</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat__value">LR</div>
+          <div class="stat__label">Algorithm</div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ══════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════ -->
+    <footer class="footer">
+      <p>SentiScope · Built with Flask + scikit-learn · Sentiment140 Dataset</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
